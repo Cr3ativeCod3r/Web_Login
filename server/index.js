@@ -24,6 +24,4 @@ app.use(express.urlencoded ({ extended: false }));
 
 app.use('/', require('./routes/authRoutes'));
 
-const port = 8000;
-app.listen(port, () => console.log('Express OK at:', port));
-
+app.listen(process.env.PORT, () => console.log('Express OK at:', process.env.PORT));
