@@ -2,75 +2,46 @@ const User = require('../models/user');
 const { hashPassword, comparePassword } = require('../hash/hashp');
 const jwt = require('jsonwebtoken');
 
-
 const test = (req, res) => {
 	res.json('test is working');
 };
 
-
 // REGISTER ENDPOINT
 const registerUser = async (req, res) => {
-
 	try {
-
 		const { name, email, password } = req.body;
 		console.log('Przekazane dane z żądania:', { name, email, password });
 
-		// check if name was entered
-		if (!name)
-		{
-			return res.json({
-				error: 'name is requrired',
-			});
-		}
+		// Check if name was entered
+		if (!name) return res.json({ error: 'name is required' });
 
 		// Check is password is good
-		if (!password || password.length < 6)
-		{
-			return res.json ({
-				error: 'Password is required and should be at least 6 characters long',
-			});
+		if (!password || password.length < 6) {
+			return res.json({ error: 'Password is required and should be at least 6 characters long' });
 		}
 
 		// Check email
 		const exist = await User.findOne({ email });
-
-		if (exist)
-		{
-			return res.json
-			({
-				error: 'Email is already taken',
-			});
-		}
+		if (exist) return res.json({ error: 'Email is already taken' });
 
 
 		const hashedPassword = await hashPassword(password);
 
 		// Create user in database
-		const user = await User.create
-		({
-			name,
-			email,
-			password: hashedPassword,
-		});
-
-
+		const user = await User.create({ name, email, password: hashedPassword });
 		return res.json(user);
 
 
-	} catch (error)
-	{
-		console.log(error);
+	} catch (err) {
+		console.error(err);
 	}
 };
 
 
 // LOGIN ENDPOINT
-
 const loginUser = async (req, res) => {
 	try {
 		const { email, password } = req.body;
-
 
 		// Check if user exists
 		const user = await User.findOne({ email });
@@ -79,7 +50,6 @@ const loginUser = async (req, res) => {
 				error: 'No user found',
 			});
 		}
-
 
 		// Check if password match
 		const match = await comparePassword(password, user.password);
