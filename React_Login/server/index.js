@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv').config();
+const helmet = require('helmet');
 const cors = require('cors');
 const { mongoose } = require('mongoose');
 const app = express();
@@ -14,7 +15,8 @@ mongoose
 
   
 // middleware
-app.use(cors()); // Enable CORS for all routes
+app.use(cors({origin: 'http://localhost:5173', credentials: true}));
+app.use(helmet({ crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: false }));
 app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded ({ extended: false }))
